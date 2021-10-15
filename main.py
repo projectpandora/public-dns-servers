@@ -96,7 +96,7 @@ def process(dns_server):
 
 
 # make the pool of workers
-pool = ThreadPool(256)
+pool = ThreadPool(64)
 results = pool.map(process, public_dns_servers)
 # close the pool and wait for the work to finish
 pool.close()
