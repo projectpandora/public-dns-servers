@@ -19,7 +19,7 @@ if (len(sys.argv) >= 2):
         public_dns_servers = sys.argv[1:]
 else:
     temp = urllib.request.urlopen(
-        "https://public-dns.info/nameservers.txt").read()
+        "https://raw.githubusercontent.com/BonJarber/fresh-resolvers/main/resolvers.txt").read()
     temp_dns_servers = []
     for line in temp.splitlines():
         if b"#" not in line:
