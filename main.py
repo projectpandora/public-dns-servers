@@ -4,6 +4,7 @@ import urllib.request
 from multiprocessing.dummy import Pool as ThreadPool
 import dns.resolver
 
+blacklist_dns_servers = ["103.138.40.238"]
 public_dns_servers = []
 
 if (len(sys.argv) >= 2):
@@ -11,7 +12,7 @@ if (len(sys.argv) >= 2):
         file1 = open(sys.argv[1], 'r')
         temp_dns_servers = []
         for line in file1.readlines():
-            if "#" not in line:
+            if "#" not in line and line not in blacklist_dns_servers:
                 temp_dns_servers.append(line.strip())
         file1.close()
         public_dns_servers = temp_dns_servers
@@ -22,7 +23,7 @@ else:
         "https://public-dns.info/nameservers.txt").read()
     temp_dns_servers = []
     for line in temp.splitlines():
-        if b"#" not in line:
+        if b"#" not in line and line not in blacklist_dns_servers:
             temp_dns_servers.append(line.decode("utf-8").strip())
     public_dns_servers = temp_dns_servers
 
