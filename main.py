@@ -25,7 +25,7 @@ else:
         "https://public-dns.info/nameserver/nameservers.json").read()
     temp_dns_servers = []
     for ip in json.loads(temp):
-        if ip['reliability'] >= MIN_RELIABILIY and b"#" not in ip and ip not in blacklist_dns_servers:
+        if ip['reliability'] >= MIN_RELIABILIY and ip['ip'] not in blacklist_dns_servers:
             temp_dns_servers.append(ip['ip'].strip())
     public_dns_servers = temp_dns_servers
 
