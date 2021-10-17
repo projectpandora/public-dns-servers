@@ -1,9 +1,11 @@
 import sys
 import time
 import urllib.request
+import json
 from multiprocessing.dummy import Pool as ThreadPool
 import dns.resolver
 
+MIN_RELIABILIY = 1
 blacklist_dns_servers = ["103.138.40.238"]
 public_dns_servers = []
 
@@ -20,11 +22,11 @@ if (len(sys.argv) >= 2):
         public_dns_servers = sys.argv[1:]
 else:
     temp = urllib.request.urlopen(
-        "https://public-dns.info/nameservers.txt").read()
+        "https://public-dns.info/nameserver/nameservers.json").read()
     temp_dns_servers = []
-    for line in temp.splitlines():
-        if b"#" not in line and line not in blacklist_dns_servers:
-            temp_dns_servers.append(line.decode("utf-8").strip())
+    for ip in json.loads(temp):
+        if ip['reliability'] >= MIN_RELIABILIY and b"#" not in ip and ip not in blacklist_dns_servers:
+            temp_dns_servers.append(ip['ip'].strip())
     public_dns_servers = temp_dns_servers
 
 data = open("/etc/resolv.conf").read().split()
@@ -113,7 +115,7 @@ sorted_results = sorted(results, key=lambda x: (
 )
 count = 0
 for result in sorted_results:
-    if (result["success_rate"] == 1.0 and result["avg_time"] < 0.1):
+    if (result["success_rate"] >= MIN_RELIABILIY and result["avg_time"] < 0.1):
         if count == 100:
             break
         count = count + 1
